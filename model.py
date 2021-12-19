@@ -7,12 +7,6 @@ from torchvision import datasets, transforms
 from torch.autograd import Variable
 import matplotlib.pyplot as plt 
 
-
-"""implementation of the Variational Recurrent
-Neural Network (VRNN) from https://arxiv.org/abs/1506.02216
-using unimodal isotropic gaussian distributions for 
-inference, prior, and generating models."""
-
 # changing device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 EPS = torch.finfo(torch.float).eps # numerical logs
@@ -78,6 +72,7 @@ class VRNN(nn.Module):
 
         all_enc_mean, all_enc_std = [], []
         all_dec_mean, all_dec_std = [], []
+        trj_infer = []
         kld_loss = 0
         nll_loss = 0
 
@@ -117,10 +112,11 @@ class VRNN(nn.Module):
             all_enc_mean.append(enc_mean_t)
             all_dec_mean.append(dec_mean_t)
             all_dec_std.append(dec_std_t)
+            trj_infer.append(z_t)
 
         return kld_loss, nll_loss, \
             (all_enc_mean, all_enc_std), \
-            (all_dec_mean, all_dec_std)
+            (all_dec_mean, all_dec_std), trj_infer
 
 
     def sample(self, seq_len):

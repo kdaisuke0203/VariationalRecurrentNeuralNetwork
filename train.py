@@ -21,7 +21,7 @@ def train(epoch):
         data = data.to(device)
         data = data.squeeze().transpose(0, 1) # (seq, batch, elem)
         data = (data - data.min()) / (data.max() - data.min())
-        
+       
         #forward + backward + optimize
         optimizer.zero_grad()
         kld_loss, nll_loss, _, _ = model(data)
